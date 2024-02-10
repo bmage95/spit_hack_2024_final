@@ -70,80 +70,102 @@ class _HomePageState extends State<HomePage> {
         title: const Text("App Bar"),
         backgroundColor: Colors.blue,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Container(
-              width: 355,
-              decoration: BoxDecoration(
-                color: Colors.amberAccent,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Monthly Expenses: ",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 21,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Container(
+                width: 355,
+                decoration: BoxDecoration(
+                  color: Colors.amberAccent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Monthly Expenses: ",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 21,
+                        ),
                       ),
-                    ),
-                    Text(
-                      '1000',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                        height: 2.5,
+                      Text(
+                        '1000',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          height: 2.5,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            "Your subscriptions: ",
-            style: TextStyle(
-              color: Colors.purpleAccent,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+            const SizedBox(height: 20),
+            const Text(
+              "Your subscriptions: ",
+              style: TextStyle(
+                color: Colors.purpleAccent,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          Container(
-            height: 200,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                return Row(
-                  children: [
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    SubscriptionCard(
-                      searchedString: "spotify",
-                      onChanged: () {
-                        // Navigate to the dedicated page
-                      },
-                    ),
-                  ],
-                );
-              },
+            Container(
+              height: 200,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 5,
+                itemBuilder: (context, index) {
+                  return Row(
+                    children: [
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      SubscriptionCard(
+                        searchedString: "spotify",
+                        onChanged: () {
+                          // Navigate to the dedicated page
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: _signOutAndNavigateToSplashPage,
-            child: const Text('Sign Out'),
-          ),
-        ],
+            const SizedBox(height: 20),
+            const Text(
+              "Today's Top Subs: ",
+              style: TextStyle(
+                color: Colors.green,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+            GridView.count(
+              shrinkWrap: true,
+              crossAxisCount: 2,
+              children: [
+                Icon(Icons.recommend),
+                Icon(Icons.recommend),
+                Icon(Icons.recommend),
+                Icon(Icons.recommend),
+              ],
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _signOutAndNavigateToSplashPage,
+              child: const Text('Sign Out'),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedTab,
