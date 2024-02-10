@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:spit_hack_2024/presentation/splash_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -17,18 +17,22 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Home Page'),
-            ElevatedButton(
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SplashPage(),
-                  ),
-                );
-              },
-              child: const Text('Logout'),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                'Monthly Expenses: 1000',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+
+                  //fontFamily: ,
+                ),
+              ),
             ),
           ],
         ),
