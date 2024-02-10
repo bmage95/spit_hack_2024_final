@@ -90,8 +90,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("App Bar"),
-        backgroundColor: Colors.blue,
+        title: const Text("Home Page"),
+        backgroundColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -185,11 +185,6 @@ class _HomePageState extends State<HomePage> {
                 Icon(Icons.recommend),
               ],
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _signOutAndNavigateToSplashPage,
-              child: const Text('Sign Out'),
-            ),
           ],
         ),
       ),
@@ -213,9 +208,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-
-
-
     );
   }
 }

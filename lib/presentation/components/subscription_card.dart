@@ -24,7 +24,7 @@ class SubscriptionCard extends StatelessWidget {
         onChanged();
       },
       child: Container(
-        height: 100, // Adjust the height here as needed
+        height: 130, // Adjust the height here as needed
         width: 200, // Adjust the width here as needed
         decoration: BoxDecoration(
           color: Colors.white10,
