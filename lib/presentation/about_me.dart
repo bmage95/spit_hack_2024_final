@@ -59,34 +59,29 @@ class _AboutMeState extends State<AboutMe> {
                   },
                 );
               },
-              child: CircleAvatar(
-                radius: 60,
-                child: StreamBuilder<DocumentSnapshot>(
-                  stream: firestore
-                      .collection('users')
-                      .doc(auth.currentUser!.uid)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      try {
-                        return Image.network(
+              child: FutureBuilder<DocumentSnapshot>(
+                future: firestore
+                    .collection('users')
+                    .doc(auth.currentUser!.uid)
+                    .get(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    try {
+                      return CircleAvatar(
+                        radius: 50,
+                        backgroundImage: NetworkImage(
                           snapshot.data!.get('profile_image'),
-                          fit: BoxFit.cover,
-                        );
-                      } catch (e) {
-                        return const Icon(
-                          Icons.person,
-                          size: 60,
-                        );
-                      }
-                    } else {
-                      return const Icon(
-                        Icons.person,
-                        size: 60,
+                        ),
+                      );
+                    } catch (e) {
+                      return CircleAvatar(
+                        radius: 50,
+                        child: Icon(Icons.person),
                       );
                     }
-                  },
-                ),
+                  }
+                  return CircularProgressIndicator();
+                },
               ),
             ),
             SizedBox(height: 20),
