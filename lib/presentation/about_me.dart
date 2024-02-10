@@ -1,10 +1,6 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 class AboutMe extends StatefulWidget {
   const AboutMe({Key? key}) : super(key: key);
@@ -14,24 +10,52 @@ class AboutMe extends StatefulWidget {
 }
 
 class _AboutMeState extends State<AboutMe> {
-  Map<String, dynamic>? userData;
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _phoneController = TextEditingController();
 
-  FirebaseStorage storage = FirebaseStorage.instance;
-  FirebaseAuth auth = FirebaseAuth.instance;
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  bool _isEditing = false;
 
   @override
   void initState() {
-    firestore
-        .collection('users')
-        .doc(auth.currentUser!.uid)
-        .get()
-        .then((value) {
-      setState(() {
-        userData = value.data();
-      });
-    });
     super.initState();
+    // Fetch user data from Firestore and populate text fields
+    fetchUserData();
+  }
+
+  void fetchUserData() async {
+    // Retrieve user data from Firestore
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+
+    if (userDoc.exists) {
+      // Populate text fields with user data
+      setState(() {
+        _nameController.text = userDoc['name'];
+        _emailController.text = userDoc['email'];
+        _phoneController.text = userDoc['phone'];
+      });
+    }
+  }
+
+  void _saveChanges() {
+    // Save changes to Firestore
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({
+      'name': _nameController.text,
+      'email': _emailController.text,
+      'phone': _phoneController.text,
+    }).then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Changes saved successfully')),
+      );
+    }).catchError((error) {
+      print('Error saving changes: $error');
+    });
   }
 
   @override
@@ -44,71 +68,51 @@ class _AboutMeState extends State<AboutMe> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Profile Image
             GestureDetector(
               onTap: () {
-                ImagePicker().pickImage(source: ImageSource.gallery).then(
-                  (value) {
-                    if (value != null) {
-                      debugPrint(value.path);
-                      File file = File(value.path);
-                      Reference storageRef = storage.refFromURL(
-                          "gs://spit-hack-2024.appspot.com/users/${auth.currentUser!.uid}/profile.${file.path.split('.').last}");
-                      storageRef.putData(file.readAsBytesSync()).then(
-                        (p0) {
-                          p0.ref.getDownloadURL().then(
-                            (value) {
-                              debugPrint(value);
-                              firestore
-                                  .collection('users')
-                                  .doc(auth.currentUser!.uid)
-                                  .update({
-                                'profile_image': value,
-                              });
-                            },
-                          );
-                        },
-                      );
-                    }
-                  },
-                );
+                // Handle image picking
               },
-              child: StreamBuilder<DocumentSnapshot>(
-                stream: firestore
-                    .collection('users')
-                    .doc(auth.currentUser!.uid)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    try {
-                      return CircleAvatar(
-                        radius: 50,
-                        backgroundImage: NetworkImage(
-                          snapshot.data!.get('profile_image'),
-                        ),
-                      );
-                    } catch (e) {
-                      return const CircleAvatar(
-                        radius: 50,
-                        child: Icon(Icons.person),
-                      );
-                    }
-                  } else {
-                    return const CircularProgressIndicator();
-                  }
-                },
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(
+                  'Profile Image URL',
+                ), // Replace 'Profile Image URL' with the user's profile image URL
               ),
             ),
             SizedBox(height: 20),
+            // Editable Text Fields
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: InputDecoration(labelText: 'Name'),
+                    enabled: _isEditing,
+                  ),
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(labelText: 'Email'),
+                    enabled: _isEditing,
+                  ),
+                  TextFormField(
+                    controller: _phoneController,
+                    decoration: InputDecoration(labelText: 'Phone Number'),
+                    enabled: _isEditing,
+                  ),
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      // Function to save user data
+                      setState(() {
+                        _isEditing = !_isEditing;
+                        if (!_isEditing) {
+                          // Save changes when editing is complete
+                          _saveChanges();
+                        }
+                      });
                     },
-                    child: Text('Save'),
+                    child: Text(_isEditing ? 'Save' : 'Edit'),
                   ),
                 ],
               ),
@@ -119,3 +123,6 @@ class _AboutMeState extends State<AboutMe> {
     );
   }
 }
+
+
+

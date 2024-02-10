@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:spit_hack_2024/presentation/your_subs.dart';
 
 import 'splash_page.dart';
 
@@ -162,6 +163,12 @@ class _SignUpState extends State<SignUp> {
                     // If the form is valid, proceed with sign up logic
                     _submitSignUpForm();
                   }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => YourSubs(), //first time
+                    ),
+                  );
                 },
                 child: const Text('Sign Up'),
               ),

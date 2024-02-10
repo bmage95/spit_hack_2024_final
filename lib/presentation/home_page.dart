@@ -5,6 +5,8 @@ import 'package:spit_hack_2024/presentation/splash_page.dart';
 
 import 'about_me.dart';
 import 'components/subscription_card.dart';
+import 'your_feed.dart';
+import 'your_subs.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -14,13 +16,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedTab = 0;
+  int _selectedTab = 1; // Start with index 1 selected
+
+  List<String> subscriptions = [
+    "elbato", "netflix", "office", "prime", "spotify"
+  ];
 
   // Define pages
   List<Widget> _pages = [
-    Center(child: Text("Home")),
     Center(child: Text("About")),
-    BrowseAll(), // Replace the Product placeholder with BrowseAll
+    BrowseAll(),
     Center(child: Text("Contact")),
     AboutMe(),
   ];
@@ -31,8 +36,17 @@ class _HomePageState extends State<HomePage> {
       _selectedTab = index;
     });
 
-    // Navigation logic for the Product tab
-    if (index == 2) {
+    // Navigation logic for the corresponding tabs
+    if (index == 0) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => YourSubs(),
+        ),
+      );
+    }
+
+    if (index == 1) {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -41,7 +55,16 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    if (index == 4) {
+    if (index == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => YourFeed(),
+        ),
+      );
+    }
+
+    if (index == 3) {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -110,7 +133,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
             const Text(
-              "Your subscriptions: ",
+              "Your Subscriptions: ",
               style: TextStyle(
                 color: Colors.purpleAccent,
                 fontSize: 24,
@@ -121,7 +144,7 @@ class _HomePageState extends State<HomePage> {
               height: 200,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: 5,
+                itemCount: subscriptions.length,
                 itemBuilder: (context, index) {
                   return Row(
                     children: [
@@ -129,11 +152,14 @@ class _HomePageState extends State<HomePage> {
                         width: 10,
                       ),
                       SubscriptionCard(
-                        searchedString: "spotify",
+                        searchedString: subscriptions[index],
+                        aspectRatio: 3 / 4,
+                        borderRadius: 10,
                         onChanged: () {
                           // Navigate to the dedicated page
                         },
                       ),
+
                     ],
                   );
                 },
@@ -152,7 +178,7 @@ class _HomePageState extends State<HomePage> {
             GridView.count(
               shrinkWrap: true,
               crossAxisCount: 2,
-              children: [
+              children: const [
                 Icon(Icons.recommend),
                 Icon(Icons.recommend),
                 Icon(Icons.recommend),
@@ -167,22 +193,30 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedTab,
-        onTap: (index) => _changeTab(index),
-        selectedItemColor: Colors.amberAccent,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "About"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.grid_3x3_outlined), label: "Product"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.contact_mail), label: "Contact"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings), label: "Settings"),
-        ],
+      bottomNavigationBar: SizedBox(
+        height: 80, // Specify the desired height here
+        child: BottomNavigationBar(
+          currentIndex: _selectedTab,
+          onTap: (index) => _changeTab(index),
+          unselectedItemColor: Colors.amberAccent,
+          selectedItemColor: Colors.amberAccent,
+          showUnselectedLabels: true,
+          iconSize: 36, // Adjust the icon size here
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Your Subs"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.grid_3x3_outlined), label: "Browse"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.contact_mail), label: "Stats"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.settings), label: "Settings"),
+          ],
+        ),
       ),
+
+
+
     );
   }
 }
+
