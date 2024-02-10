@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.gdsc_mpstme" "\0"
-            VALUE "FileDescription", "spit_hack_2024" "\0"
+            VALUE "CompanyName", "com.example" "\0"
+            VALUE "FileDescription", "spit_hackathon_subshare" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "spit_hack_2024" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 com.gdsc_mpstme. All rights reserved." "\0"
-            VALUE "OriginalFilename", "spit_hack_2024.exe" "\0"
-            VALUE "ProductName", "spit_hack_2024" "\0"
+            VALUE "InternalName", "spit_hackathon_subshare" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
+            VALUE "OriginalFilename", "spit_hackathon_subshare.exe" "\0"
+            VALUE "ProductName", "spit_hackathon_subshare" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

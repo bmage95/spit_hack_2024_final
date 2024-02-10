@@ -1,6 +1,6 @@
-# spit_hack_2024
+# spit_hackathon_subshare
 
-Subscription Sharing Platform for SPIT hackathon 2024
+A project for spit hackathon
 
 ## Getting Started
 

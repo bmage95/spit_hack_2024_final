@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.spitHackathonSubshare</string>
+	<string>com.example.spitHackathonSubshare.RunnerTests</string>
 	<key>PROJECT_ID</key>
 	<string>spit-hack-2024</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:820462155909:ios:1b8a33d684d838d42651ec</string>
+	<string>1:820462155909:ios:c970fb0c64bfa46e2651ec</string>
 </dict>
 </plist>

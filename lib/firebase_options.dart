@@ -25,10 +25,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -58,7 +55,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCuvf62lZjySIkE_UpACnG0xm-8wRbKlwU',
-    appId: '1:820462155909:android:8591e942845e222b2651ec',
+    appId: '1:820462155909:android:bac29ab6ada832452651ec',
     messagingSenderId: '820462155909',
     projectId: 'spit-hack-2024',
     storageBucket: 'spit-hack-2024.appspot.com',
@@ -66,10 +63,19 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBuGPgNPEPYTeui-wjbRMmfqKW13___vT0',
-    appId: '1:820462155909:ios:7893665d830a83cb2651ec',
+    appId: '1:820462155909:ios:1b8a33d684d838d42651ec',
     messagingSenderId: '820462155909',
     projectId: 'spit-hack-2024',
     storageBucket: 'spit-hack-2024.appspot.com',
-    iosBundleId: 'com.gdscmpstme.spitHack2024',
+    iosBundleId: 'com.example.spitHackathonSubshare',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyBuGPgNPEPYTeui-wjbRMmfqKW13___vT0',
+    appId: '1:820462155909:ios:c970fb0c64bfa46e2651ec',
+    messagingSenderId: '820462155909',
+    projectId: 'spit-hack-2024',
+    storageBucket: 'spit-hack-2024.appspot.com',
+    iosBundleId: 'com.example.spitHackathonSubshare.RunnerTests',
   );
 }
