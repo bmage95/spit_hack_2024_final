@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:otp_text_field/otp_field_style.dart';
+import 'package:otp_text_field/style.dart';
 import 'package:spit_hack_2024/presentation/splash_page.dart';
 
 class VerifyOtpPage extends StatefulWidget {
@@ -52,11 +55,26 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'OTP',
+              OTPTextField(
+                length: 6,
+                width: MediaQuery.of(context).size.width,
+                fieldWidth: 40,
+                style: const TextStyle(
+                  fontSize: 17,
                 ),
-                controller: otpController,
+                otpFieldStyle: OtpFieldStyle(
+                  borderColor: Colors.white,
+                ),
+                textFieldAlignment: MainAxisAlignment.spaceAround,
+                fieldStyle: FieldStyle.underline,
+                onCompleted: (String value) {
+                  verifyOtp(value);
+                },
+                onChanged: (String value) {
+                  setState(() {
+                    otpController.text = value;
+                  });
+                },
               ),
               ElevatedButton(
                 onPressed: () {
