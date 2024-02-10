@@ -18,36 +18,36 @@ class _YourSubsState extends State<YourSubs> {
       ),
       body: subscriptions.isEmpty
           ? Center(
-        child: Container(
-          padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8.0),
-            color: Colors.grey[300],
-          ),
-          child: Text(
-            'Oops! to add new press the button ->',
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      )
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  color: Colors.grey[300],
+                ),
+                child: Text(
+                  'Oops! to add new press the button ->',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            )
           : ListView.builder(
-        itemCount: subscriptions.length,
-        itemBuilder: (context, index) {
-          final subscription = subscriptions[index];
-          return ListTile(
-            title: Text(subscription['name'] ?? ''),
-            subtitle: Text(subscription['type'] ?? ''),
-            trailing: Text(subscription['price'] ?? ''),
-            onTap: () {
-              // Implement onTap action if needed
-            },
-          );
-        },
-      ),
+              itemCount: subscriptions.length,
+              itemBuilder: (context, index) {
+                final subscription = subscriptions[index];
+                return ListTile(
+                  title: Text(subscription['name'] ?? ''),
+                  subtitle: Text(subscription['type'] ?? ''),
+                  trailing: Text(subscription['price'] ?? ''),
+                  onTap: () {
+                    // Implement onTap action if needed
+                  },
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _showSubscriptionDialog();
