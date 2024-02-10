@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AboutMe extends StatefulWidget {
   const AboutMe({Key? key}) : super(key: key);
@@ -15,6 +19,8 @@ class _AboutMeState extends State<AboutMe> {
   TextEditingController _phoneController = TextEditingController();
 
   bool _isEditing = false;
+
+  FirebaseStorage storage = FirebaseStorage.instance;
 
   @override
   void initState() {
@@ -71,16 +77,62 @@ class _AboutMeState extends State<AboutMe> {
             // Profile Image
             GestureDetector(
               onTap: () {
-                // Handle image picking
+                ImagePicker()
+                    .pickImage(source: ImageSource.gallery)
+                    .then((value) {
+                  if (value != null) {
+                    File file = File(value.path);
+                    storage
+                        .ref(
+                            'users/${FirebaseAuth.instance.currentUser!.uid}/profile.${file.path.split(".").last}')
+                        .putFile(file)
+                        .then((snapshot) {
+                      snapshot.ref.getDownloadURL().then((url) {
+                        FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(FirebaseAuth.instance.currentUser!.uid)
+                            .update({'profile_image': url}).then((_) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content:
+                                    Text('Profile image updated successfully')),
+                          );
+                        }).catchError((error) {
+                          print('Error updating profile image: $error');
+                        });
+                      });
+                    });
+                  }
+                });
               },
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: NetworkImage(
-                  'Profile Image URL',
-                ), // Replace 'Profile Image URL' with the user's profile image URL
+              child: StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const CircleAvatar(
+                      radius: 50,
+                      child: Icon(Icons.person),
+                    );
+                  }
+                  try {
+                    return CircleAvatar(
+                      radius: 50,
+                      backgroundImage:
+                          NetworkImage(snapshot.data!['profile_image']),
+                    );
+                  } catch (e) {
+                    return const CircleAvatar(
+                      radius: 50,
+                      child: Icon(Icons.person),
+                    );
+                  }
+                },
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Editable Text Fields
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -88,20 +140,21 @@ class _AboutMeState extends State<AboutMe> {
                 children: [
                   TextFormField(
                     controller: _nameController,
-                    decoration: InputDecoration(labelText: 'Name'),
+                    decoration: const InputDecoration(labelText: 'Name'),
                     enabled: _isEditing,
                   ),
                   TextFormField(
                     controller: _emailController,
-                    decoration: InputDecoration(labelText: 'Email'),
+                    decoration: const InputDecoration(labelText: 'Email'),
                     enabled: _isEditing,
                   ),
                   TextFormField(
                     controller: _phoneController,
-                    decoration: InputDecoration(labelText: 'Phone Number'),
+                    decoration:
+                        const InputDecoration(labelText: 'Phone Number'),
                     enabled: _isEditing,
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
                       setState(() {
@@ -123,6 +176,3 @@ class _AboutMeState extends State<AboutMe> {
     );
   }
 }
-
-
-

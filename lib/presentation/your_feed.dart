@@ -10,6 +10,17 @@ class YourFeed extends StatefulWidget {
 class _YourFeedState extends State<YourFeed> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Your Stats'),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Text(''),
+          ],
+        ),
+      ),
+    );
   }
 }
