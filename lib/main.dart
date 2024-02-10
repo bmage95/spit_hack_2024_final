@@ -24,7 +24,7 @@ class RootApp extends StatelessWidget {
         brightness: Brightness.dark,
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(),
+      home: const SplashPage(),
     );
   }
 }

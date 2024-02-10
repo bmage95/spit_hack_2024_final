@@ -16,7 +16,6 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   void _redirect() {
     FirebaseAuth auth = FirebaseAuth.instance;
-    auth.signOut();
     if (auth.currentUser != null) {
       Navigator.pushReplacement(
         context,
