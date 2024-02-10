@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:spit_hack_2024/presentation/splash_page.dart';
 
 class AboutMe extends StatefulWidget {
   const AboutMe({Key? key}) : super(key: key);
@@ -69,6 +70,20 @@ class _AboutMeState extends State<AboutMe> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('About Me'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SplashPage(),
+                ),
+              );
+            },
+            icon: Icon(Icons.logout),
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -84,7 +99,7 @@ class _AboutMeState extends State<AboutMe> {
                     File file = File(value.path);
                     storage
                         .ref(
-                            'users/${FirebaseAuth.instance.currentUser!.uid}/profile.${file.path.split(".").last}')
+                        'users/${FirebaseAuth.instance.currentUser!.uid}/profile.${file.path.split(".").last}')
                         .putFile(file)
                         .then((snapshot) {
                       snapshot.ref.getDownloadURL().then((url) {
@@ -95,7 +110,7 @@ class _AboutMeState extends State<AboutMe> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 content:
-                                    Text('Profile image updated successfully')),
+                                Text('Profile image updated successfully')),
                           );
                         }).catchError((error) {
                           print('Error updating profile image: $error');
@@ -121,7 +136,7 @@ class _AboutMeState extends State<AboutMe> {
                     return CircleAvatar(
                       radius: 50,
                       backgroundImage:
-                          NetworkImage(snapshot.data!['profile_image']),
+                      NetworkImage(snapshot.data!['profile_image']),
                     );
                   } catch (e) {
                     return const CircleAvatar(
@@ -151,7 +166,7 @@ class _AboutMeState extends State<AboutMe> {
                   TextFormField(
                     controller: _phoneController,
                     decoration:
-                        const InputDecoration(labelText: 'Phone Number'),
+                    const InputDecoration(labelText: 'Phone Number'),
                     enabled: _isEditing,
                   ),
                   const SizedBox(height: 20),
