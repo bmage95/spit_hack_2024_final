@@ -48,7 +48,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 onInputChanged: (PhoneNumber number) {
                   debugPrint(number.parseNumber());
                   setState(() {
-                    phoneNumberController.text = "${number.dialCode} ${number.parseNumber()}";
+                    phoneNumberController.text =
+                        "${number.dialCode} ${number.parseNumber()}";
                   });
                 },
                 onInputValidated: (bool value) {},
