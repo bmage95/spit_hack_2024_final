@@ -14,12 +14,25 @@ class AboutMe extends StatefulWidget {
 }
 
 class _AboutMeState extends State<AboutMe> {
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
+  Map<String, dynamic>? userData;
 
   FirebaseStorage storage = FirebaseStorage.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  @override
+  void initState() {
+    firestore
+        .collection('users')
+        .doc(auth.currentUser!.uid)
+        .get()
+        .then((value) {
+      setState(() {
+        userData = value.data();
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,34 +72,30 @@ class _AboutMeState extends State<AboutMe> {
                   },
                 );
               },
-              child: CircleAvatar(
-                radius: 60,
-                child: StreamBuilder<DocumentSnapshot>(
-                  stream: firestore
-                      .collection('users')
-                      .doc(auth.currentUser!.uid)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      try {
-                        return Image.network(
+              child: StreamBuilder<DocumentSnapshot>(
+                stream: firestore
+                    .collection('users')
+                    .doc(auth.currentUser!.uid)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    try {
+                      return CircleAvatar(
+                        radius: 50,
+                        backgroundImage: NetworkImage(
                           snapshot.data!.get('profile_image'),
-                          fit: BoxFit.cover,
-                        );
-                      } catch (e) {
-                        return const Icon(
-                          Icons.person,
-                          size: 60,
-                        );
-                      }
-                    } else {
-                      return const Icon(
-                        Icons.person,
-                        size: 60,
+                        ),
+                      );
+                    } catch (e) {
+                      return const CircleAvatar(
+                        radius: 50,
+                        child: Icon(Icons.person),
                       );
                     }
-                  },
-                ),
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
               ),
             ),
             SizedBox(height: 20),
@@ -94,19 +103,6 @@ class _AboutMeState extends State<AboutMe> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  TextField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Name',
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  TextField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                    ),
-                  ),
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
