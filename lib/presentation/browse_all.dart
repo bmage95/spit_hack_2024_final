@@ -17,7 +17,6 @@ class _BrowseAllState extends State<BrowseAll> {
     'assets/spotify.png',
     'assets/office.png',
     'assets/prime.png',
-    'assets/elbato.png',
   ];
 
   // List of icons
@@ -46,7 +45,7 @@ class _BrowseAllState extends State<BrowseAll> {
   ];
 
   // Corresponding labels for the first five icons
-  List<String> _labels = ['Netflix', 'Spotify', 'Office', 'Prime', 'Elbato'];
+  List<String> _labels = ['Netflix', 'Spotify', 'Office', 'Prime'];
 
   // Method to get the corresponding image path for each index
   String _getImagePath(int index) {

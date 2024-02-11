@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:spit_hack_2024/presentation/home_page.dart';
 
@@ -17,21 +16,23 @@ class _PaymentPageState extends State<PaymentPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
-            child: Text("Payment Interface",
-            style: TextStyle(
-              fontSize: 29
-            ),
+            child: Text(
+              "Payment Interface",
+              style: TextStyle(fontSize: 29),
             ),
           ),
-          ElevatedButton(onPressed: (){
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomePage(),
-              ),
-            );
-          }, child: Text("Back to Home"))
-
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomePage(),
+                ),
+              );
+            },
+            child: Text("Back to Home"),
+          )
         ],
       ),
     );

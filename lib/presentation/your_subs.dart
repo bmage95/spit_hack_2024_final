@@ -1,8 +1,9 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
-import 'package:spit_hack_2024/presentation/splash_page.dart';
 import 'package:spit_hack_2024/utils/subscription_details.dart';
 import 'components/bottomNavBar.dart';
 
@@ -14,26 +15,39 @@ class YourSubs extends StatefulWidget {
 }
 
 class _YourSubsState extends State<YourSubs> {
-  List<Map<String, String>> subscriptions = [];
+  List<Map<String, dynamic>> subscriptions = [];
   final TextEditingController name1 = TextEditingController();
   String selectedType = 'Type 1'; // Default value for Type
-  String selectedPrice = 'Price 1'; // Default value for Price
+  int selectedPrice = 149; // Default value for Price
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
-  final prices=["Price 1","Price 2"];
+  final prices = [149, 999];
   GlobalKey<AutoCompleteTextFieldState<String>> key = GlobalKey();
   final data = SubscriptionDetails.subscriptionData;
-  final types=["Type 1","Type 2"];
-  List<String> titles = SubscriptionDetails.subscriptionData.values.map<
-      String>((value) => value['title']).toList();
+  final types = ["Type 1", "Type 2"];
+  List<String> titles = SubscriptionDetails.subscriptionData.values
+      .map<String>((value) => value['title'])
+      .toList();
   int typeIndex = 0;
 
-
-
-
-
-
-
+  @override
+  void initState() {
+    firestore
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('subscriptions')
+        .get()
+        .then((value) {
+      if (value.docs.isNotEmpty) {
+        value.docs.forEach((element) {
+          setState(() {
+            subscriptions.add(element.data());
+          });
+        });
+      }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,37 +56,53 @@ class _YourSubsState extends State<YourSubs> {
         title: const Text('Your Subscriptions'),
       ),
       body: subscriptions.isEmpty
-          ? Center(
-        child: Text(
-          'Oops! To add new, press the button ->',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      )
+          ? const Center(
+              child: Text(
+                'Oops! To add new, press the button ->',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )
           : ListView.builder(
-        itemCount: subscriptions.length,
-        itemBuilder: (context, index) {
-          final subscription = subscriptions[index];
-          return ListTile(
-            title: Text(subscription['name'] ?? ''),
-            subtitle: Text(subscription['type'] ?? ''),
-            trailing: Text(subscription['price'] ?? ''),
-            onTap: () {
-              // Implement onTap action if needed
-            },
-          );
-        },
-      ),
+              itemCount: subscriptions.length,
+              itemBuilder: (context, index) {
+                final subscription = subscriptions[index];
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    title: Text(
+                      subscription['name'] ?? '',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    trailing: Text(
+                      "₹${subscription['price']}" ?? '',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    onTap: () {
+                      // Implement onTap action if needed
+                    },
+                  ),
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _showSubscriptionDialog();
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
-      bottomNavigationBar: BottomNavBar(initialTabIndex: 2,),
+      bottomNavigationBar: const BottomNavBar(
+        initialTabIndex: 2,
+      ),
     );
   }
 
@@ -83,7 +113,7 @@ class _YourSubsState extends State<YourSubs> {
         String name = '';
 
         return AlertDialog(
-          title: Text('Add Subscription'),
+          title: const Text('Add Subscription'),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -106,11 +136,11 @@ class _YourSubsState extends State<YourSubs> {
                       name = data;
                     });
                   },
-                  decoration: InputDecoration(labelText: 'Name'),
+                  decoration: const InputDecoration(labelText: 'Name'),
                 ),
                 DropdownButtonFormField<String>(
                   value: selectedType,
-                  decoration: InputDecoration(labelText: 'Type'),
+                  decoration: const InputDecoration(labelText: 'Type'),
                   items: types.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -121,19 +151,18 @@ class _YourSubsState extends State<YourSubs> {
                     setState(() {
                       selectedType = value!;
                       typeIndex = types.indexOf(selectedType);
-                      selectedPrice=prices[typeIndex];// Update typeIndex here
+                      selectedPrice =
+                          prices[typeIndex]; // Update typeIndex here
                     });
                   },
                 ),
-
-                DropdownButtonFormField<String>(
+                DropdownButtonFormField<int>(
                   value: selectedPrice,
-                  decoration: InputDecoration(labelText: 'Price'),
-                  items: prices // Example options for Price
-                      .map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
+                  decoration: const InputDecoration(labelText: 'Price'),
+                  items: prices.map((int value) {
+                    return DropdownMenuItem<int>(
+                      value: value ?? 0,
+                      child: Text(value.toString()),
                     );
                   }).toList(),
                   onChanged: (value) {
@@ -150,7 +179,7 @@ class _YourSubsState extends State<YourSubs> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
@@ -159,7 +188,7 @@ class _YourSubsState extends State<YourSubs> {
                 });
                 Navigator.of(context).pop();
               },
-              child: Text('Add'),
+              child: const Text('Add'),
             ),
           ],
         );
@@ -179,6 +208,8 @@ class _YourSubsState extends State<YourSubs> {
       'name': subscriptionName,
       'type': selectedType,
       'price': selectedPrice,
+      'imageName': SubscriptionDetails.subscriptionData.values
+          .elementAt(titles.indexOf(subscriptionName))['icon_image'],
     }).then((value) {
       // Subscription added successfully
     }).catchError((error) {

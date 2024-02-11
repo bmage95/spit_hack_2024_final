@@ -1,12 +1,16 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:spit_hack_2024/presentation/browse_all.dart'; // Import BrowseAll page
 import 'package:spit_hack_2024/presentation/splash_page.dart';
+import 'package:spit_hack_2024/presentation/subscription_details_page.dart';
+import 'package:spit_hack_2024/utils/subscription_details.dart';
 
 import 'about_me.dart';
 import 'components/bottomNavBar.dart';
 import 'components/subscription_card.dart';
-import 'your_feed.dart';
 import 'your_subs.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,180 +21,229 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedTab = 1; // Start with index 1 selected
+  List<Map<String, dynamic>> subscriptions = [];
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  int monthlyExpenses = 0;
+  FirebaseAuth auth = FirebaseAuth.instance;
 
-  List<String> subscriptions = [
-    "elbato", "netflix", "office", "prime", "spotify"
-  ];
+  List<int> randomIndexes = [];
 
-  // Define pages
-  List<Widget> _pages = [
-    Center(child: Text("About")),
-    BrowseAll(),
-    Center(child: Text("Contact")),
-    AboutMe(),
-  ];
-
-  // Function to change the selected tab
-  void _changeTab(int index) {
-    setState(() {
-      _selectedTab = index;
-    });
-
-    // Navigation logic for the corresponding tabs
-    if (index == 0) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HomePage(),
-        ),
-      );
-    }
-
-    if (index == 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BrowseAll(),
-        ),
-      );
-    }
-
-    if (index == 2) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => YourSubs(),
-        ),
-      );
-    }
-
-    if (index == 3) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AboutMe(),
-        ),
-      );
+  getRandIndex() {
+    var rand = Random();
+    var index = rand.nextInt(SubscriptionDetails.subscriptionData.keys.length);
+    if (randomIndexes.contains(index)) {
+      getRandIndex();
+    } else {
+      setState(() {
+        randomIndexes.add(index);
+      });
     }
   }
 
-  // Sign out and navigate to SplashPage
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  void _signOutAndNavigateToSplashPage() async {
-    await _auth.signOut();
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SplashPage(),
-      ),
-    );
+  @override
+  void initState() {
+    firestore
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('subscriptions')
+        .get()
+        .then((value) {
+      if (value.docs.isNotEmpty) {
+        value.docs.forEach((element) {
+          setState(() {
+            subscriptions.add(element.data());
+          });
+        });
+      }
+    });
+    firestore
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('subscriptions')
+        .get()
+        .then((value) {
+      if (value.docs.isNotEmpty) {
+        value.docs.forEach((element) {
+          setState(() {
+            monthlyExpenses += int.parse(element['price'].toString());
+          });
+        });
+      }
+    });
+    for (var i = 0; i < 4; i++) {
+      getRandIndex();
+    }
+    debugPrint(randomIndexes.toString());
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Home Page"),
+          title: const Text("SubSplit"),
           backgroundColor: Colors.transparent,
         ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Container(
-                width: 355,
-                decoration: BoxDecoration(
-                  color: Colors.amberAccent,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        body: RefreshIndicator(
+          onRefresh: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              ),
+            );
+            return Future.value(false);
+          },
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.blue[100],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Monthly Expenses: ",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 21,
+                                ),
+                              ),
+                              Text(
+                                ' ₹ $monthlyExpenses',
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  height: 2.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(16, 0, 0, 0),
+                    child: Text(
+                      "Your Subscriptions: ",
+                      style: TextStyle(
+                        color: Colors.amber,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 200,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: subscriptions.length,
+                      itemBuilder: (context, index) {
+                        return Row(
+                          children: [
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        SubscriptionDetailsPage(
+                                      name: subscriptions[index]['imageName']
+                                              .split('/')
+                                              .last
+                                              .split('.')
+                                              .first ??
+                                          '',
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: SubscriptionCard(
+                                searchedString: subscriptions[index]
+                                        ['imageName']
+                                    .split('/')[1]
+                                    .split('.')
+                                    .first,
+                                aspectRatio: 3 / 4,
+                                borderRadius: 10,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(16, 0, 0, 0),
+                    child: Text(
+                      "Today's Top Subs: ",
+                      style: TextStyle(
+                        color: Colors.amber,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 2,
                     children: [
-                      Text(
-                        "Monthly Expenses: ",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 21,
+                      for (int i = 0; i < randomIndexes.length; i++)
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SubscriptionDetailsPage(
+                                  name: SubscriptionDetails
+                                      .subscriptionData.keys
+                                      .elementAt(randomIndexes[i]),
+                                ),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset(
+                              SubscriptionDetails.subscriptionData[
+                                      SubscriptionDetails.subscriptionData.keys
+                                          .elementAt(randomIndexes[i])]
+                                  ['icon_image'],
+                              height: 60,
+                              width: 60,
+                            ),
+                          ),
                         ),
-                      ),
-                      Text(
-                        ' ₹ 1000.00',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          height: 2.5,
-                        ),
-                      ),
                     ],
                   ),
-                ),
+                ],
               ),
             ),
-            const SizedBox(height: 20),
-            const Text(
-              "Your Subscriptions: ",
-              style: TextStyle(
-                color: Colors.amber,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Container(
-              height: 200,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: subscriptions.length,
-                itemBuilder: (context, index) {
-                  return Row(
-                    children: [
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      SubscriptionCard(
-                        searchedString: subscriptions[index],
-                        aspectRatio: 3 / 4,
-                        borderRadius: 10,
-                        onChanged: () {
-                          // Navigate to the dedicated page
-                        },
-                      ),
-
-                    ],
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              "Today's Top Subs: ",
-              style: TextStyle(
-                color: Colors.green,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 10),
-            GridView.count(
-              shrinkWrap: true,
-              crossAxisCount: 2,
-              children: const [
-                Icon(Icons.recommend),
-                Icon(Icons.recommend),
-                Icon(Icons.recommend),
-                Icon(Icons.recommend),
-              ],
-            ),
-          ],
+          ),
         ),
-      ),
-      bottomNavigationBar: BottomNavBar(initialTabIndex: 0,)
-    );
+        bottomNavigationBar: const BottomNavBar(
+          initialTabIndex: 0,
+        ));
   }
 }
-
