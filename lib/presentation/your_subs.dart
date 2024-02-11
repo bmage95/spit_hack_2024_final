@@ -27,27 +27,55 @@ class _YourSubsState extends State<YourSubs> {
       appBar: AppBar(
         title: const Text('Your Subscriptions'),
       ),
-      body: subscriptions.isEmpty
-          ? Center(
-        child: Text(
-          'Oops! to add new press the button ->',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      )
-          : ListView.builder(
-        itemCount: subscriptions.length,
-        itemBuilder: (context, index) {
-          final subscription = subscriptions[index];
-          return ListTile(
-            title: Text(subscription['name'] ?? ''),
-            subtitle: Text(subscription['type'] ?? ''),
-            trailing: Text(subscription['price'] ?? ''),
-            onTap: () {
-              // Implement onTap action if needed
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .doc(auth.currentUser!.uid)
+            .collection('subscriptions')
+            .snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          var subscriptions = snapshot.data!.docs;
+
+          if (subscriptions.isEmpty) {
+            return Center(
+              child: Text(
+                'Oops! To add new, press the button ->',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: subscriptions.length,
+            itemBuilder: (context, index) {
+              var subscription = subscriptions[index].data() as Map<String, dynamic>;
+              return ListTile(
+                leading: CircleAvatar(
+                  child: Placeholder(),
+                ),
+                title: Text(subscription['name'] ?? ''),
+                subtitle: Text(subscription['address'] ?? ''),
+                trailing: Text(subscription['dob'] ?? ''),
+                onTap: () {
+                  // Implement onTap action if needed
+                },
+              );
             },
           );
         },
@@ -58,7 +86,7 @@ class _YourSubsState extends State<YourSubs> {
         },
         child: Icon(Icons.add),
       ),
-        bottomNavigationBar: BottomNavBar()
+      bottomNavigationBar: BottomNavBar(),
     );
   }
 
