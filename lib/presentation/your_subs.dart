@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:spit_hack_2024/presentation/splash_page.dart';
-
+import 'package:spit_hack_2024/utils/subscription_details.dart';
 import 'components/bottomNavBar.dart';
 
 class YourSubs extends StatefulWidget {
@@ -15,67 +15,53 @@ class YourSubs extends StatefulWidget {
 
 class _YourSubsState extends State<YourSubs> {
   List<Map<String, String>> subscriptions = [];
-  GlobalKey<AutoCompleteTextFieldState<String>> key = GlobalKey();
-  final TextEditingController name1 = new TextEditingController();
-  final TextEditingController type1 = new TextEditingController();
-  final TextEditingController price1 = new TextEditingController();
+  final TextEditingController name1 = TextEditingController();
+  String selectedType = 'Type 1'; // Default value for Type
+  String selectedPrice = 'Price 1'; // Default value for Price
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
+  final prices=["Price 1","Price 2"];
+  GlobalKey<AutoCompleteTextFieldState<String>> key = GlobalKey();
+  final data = SubscriptionDetails.subscriptionData;
+  final types=["Type 1","Type 2"];
+  List<String> titles = SubscriptionDetails.subscriptionData.values.map<
+      String>((value) => value['title']).toList();
+  int typeIndex = 0;
+
+
+
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Subscriptions'),
       ),
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('users')
-            .doc(auth.currentUser!.uid)
-            .collection('subscriptions')
-            .snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          var subscriptions = snapshot.data!.docs;
-
-          if (subscriptions.isEmpty) {
-            return Center(
-              child: Text(
-                'Oops! To add new, press the button ->',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            );
-          }
-
-          return ListView.builder(
-            itemCount: subscriptions.length,
-            itemBuilder: (context, index) {
-              var subscription = subscriptions[index].data() as Map<String, dynamic>;
-              return ListTile(
-                leading: CircleAvatar(
-                  child: Placeholder(),
-                ),
-                title: Text(subscription['name'] ?? ''),
-                subtitle: Text(subscription['address'] ?? ''),
-                trailing: Text(subscription['dob'] ?? ''),
-                onTap: () {
-                  // Implement onTap action if needed
-                },
-              );
+      body: subscriptions.isEmpty
+          ? Center(
+        child: Text(
+          'Oops! To add new, press the button ->',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      )
+          : ListView.builder(
+        itemCount: subscriptions.length,
+        itemBuilder: (context, index) {
+          final subscription = subscriptions[index];
+          return ListTile(
+            title: Text(subscription['name'] ?? ''),
+            subtitle: Text(subscription['type'] ?? ''),
+            trailing: Text(subscription['price'] ?? ''),
+            onTap: () {
+              // Implement onTap action if needed
             },
           );
         },
@@ -86,7 +72,7 @@ class _YourSubsState extends State<YourSubs> {
         },
         child: Icon(Icons.add),
       ),
-      bottomNavigationBar: BottomNavBar(),
+      bottomNavigationBar: BottomNavBar(initialTabIndex: 2,),
     );
   }
 
@@ -95,8 +81,6 @@ class _YourSubsState extends State<YourSubs> {
       context: context,
       builder: (BuildContext context) {
         String name = '';
-        String type = '';
-        String price = '';
 
         return AlertDialog(
           title: Text('Add Subscription'),
@@ -105,10 +89,10 @@ class _YourSubsState extends State<YourSubs> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 AutoCompleteTextField<String>(
-                  controller: name1,
                   key: key,
+                  controller: name1,
                   clearOnSubmit: false,
-                  suggestions: ["Netflix", "Amazon Prime", "Hulu", "Disney+"],
+                  suggestions: titles,
                   itemBuilder: (BuildContext context, String suggestion) {
                     return ListTile(
                       title: Text(suggestion),
@@ -124,20 +108,39 @@ class _YourSubsState extends State<YourSubs> {
                   },
                   decoration: InputDecoration(labelText: 'Name'),
                 ),
-                TextField(
-                  controller: type1,
+                DropdownButtonFormField<String>(
+                  value: selectedType,
                   decoration: InputDecoration(labelText: 'Type'),
+                  items: types.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
                   onChanged: (value) {
-                    type = value;
+                    setState(() {
+                      selectedType = value!;
+                      typeIndex = types.indexOf(selectedType);
+                      selectedPrice=prices[typeIndex];// Update typeIndex here
+                    });
                   },
                 ),
-                TextFormField(
-                  controller: price1,
+
+                DropdownButtonFormField<String>(
+                  value: selectedPrice,
                   decoration: InputDecoration(labelText: 'Price'),
+                  items: prices // Example options for Price
+                      .map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
                   onChanged: (value) {
-                    price = value;
+                    setState(() {
+                      selectedPrice = value!;
+                    });
                   },
-                  keyboardType: TextInputType.number,
                 ),
               ],
             ),
@@ -153,7 +156,6 @@ class _YourSubsState extends State<YourSubs> {
               onPressed: () {
                 setState(() {
                   _submitSignUpForm(context);
-
                 });
                 Navigator.of(context).pop();
               },
@@ -161,27 +163,26 @@ class _YourSubsState extends State<YourSubs> {
             ),
           ],
         );
-
       },
-
     );
   }
+
   void _submitSignUpForm(BuildContext context) {
-    final subscription_name = name1.text;
-    final subscription_type = type1.text;
-    final subscription_price = price1.text;
+    final subscriptionName = name1.text;
 
-    firestore.collection('users').doc(auth.currentUser!.uid).collection('subscriptions').doc(subscription_name).set({
-      'name': subscription_name,
-      'address': subscription_type,
-      'dob': subscription_price,
+    firestore
+        .collection('users')
+        .doc(auth.currentUser!.uid)
+        .collection('subscriptions')
+        .doc(subscriptionName)
+        .set({
+      'name': subscriptionName,
+      'type': selectedType,
+      'price': selectedPrice,
     }).then((value) {
-
+      // Subscription added successfully
     }).catchError((error) {
       print('Error: $error');
     });
   }
-
-
-
 }

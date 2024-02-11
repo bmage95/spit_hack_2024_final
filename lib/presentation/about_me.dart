@@ -189,7 +189,7 @@ class _AboutMeState extends State<AboutMe> {
           ],
         ),
       ),
-        bottomNavigationBar: BottomNavBar()
+        bottomNavigationBar: BottomNavBar(initialTabIndex: 3,)
     );
   }
 }

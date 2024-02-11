@@ -55,5 +55,8 @@ class SubscriptionDetails {
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnqw6j8K4-XqakxAsAgcRKRAeAJPcqoJWGJQ&usqp=CAU"
       ]
     }
+
   };
+
+
 }

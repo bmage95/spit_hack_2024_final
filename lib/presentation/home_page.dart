@@ -90,10 +90,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Home Page"),
-        backgroundColor: Colors.transparent,
-      ),
+        appBar: AppBar(
+          title: const Text("Home Page"),
+          backgroundColor: Colors.transparent,
+        ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,7 +119,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       Text(
-                        '1000',
+                        ' ₹ 1000.00',
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 30,
@@ -136,7 +136,7 @@ class _HomePageState extends State<HomePage> {
             const Text(
               "Your Subscriptions: ",
               style: TextStyle(
-                color: Colors.purpleAccent,
+                color: Colors.amber,
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
@@ -189,7 +189,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavBar()
+      bottomNavigationBar: BottomNavBar(initialTabIndex: 0,)
     );
   }
 }

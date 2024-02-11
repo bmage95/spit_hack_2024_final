@@ -6,14 +6,21 @@ import '../home_page.dart';
 import '../your_subs.dart';
 
 class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({super.key});
+  final int initialTabIndex;
+  const BottomNavBar({Key? key, required this.initialTabIndex}) : super(key: key);
 
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
-  int _selectedTab = 0;
+  late int _selectedTab; // Declare _selectedTab as late
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedTab = widget.initialTabIndex; // Initialize _selectedTab using the provided initialTabIndex
+  }
   void _changeTab(int index) {
     setState(() {
       _selectedTab = index;
@@ -21,7 +28,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
     // Navigation logic for the corresponding tabs
     if (index == 0) {
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => HomePage(),
@@ -30,7 +37,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     }
 
     if (index == 1) {
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => BrowseAll(),
@@ -39,7 +46,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     }
 
     if (index == 2) {
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => YourSubs(),
@@ -49,7 +56,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
     if (index == 3) {
 
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => AboutMe(),

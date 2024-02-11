@@ -121,7 +121,7 @@ class _BrowseAllState extends State<BrowseAll> {
           ),
         ],
       ),
-        bottomNavigationBar: BottomNavBar()
+        bottomNavigationBar: BottomNavBar(initialTabIndex: 1,)
     );
   }
 }
