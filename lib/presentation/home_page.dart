@@ -4,6 +4,7 @@ import 'package:spit_hack_2024/presentation/browse_all.dart'; // Import BrowseAl
 import 'package:spit_hack_2024/presentation/splash_page.dart';
 
 import 'about_me.dart';
+import 'components/bottomNavBar.dart';
 import 'components/subscription_card.dart';
 import 'your_feed.dart';
 import 'your_subs.dart';
@@ -41,7 +42,7 @@ class _HomePageState extends State<HomePage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => YourSubs(),
+          builder: (context) => HomePage(),
         ),
       );
     }
@@ -59,7 +60,7 @@ class _HomePageState extends State<HomePage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => YourFeed(),
+          builder: (context) => YourSubs(),
         ),
       );
     }
@@ -188,26 +189,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: SizedBox(
-        height: 80, // Specify the desired height here
-        child: BottomNavigationBar(
-          currentIndex: _selectedTab,
-          onTap: (index) => _changeTab(index),
-          unselectedItemColor: Colors.amberAccent,
-          selectedItemColor: Colors.amberAccent,
-          showUnselectedLabels: true,
-          iconSize: 36, // Adjust the icon size here
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Your Subs"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.grid_3x3_outlined), label: "Browse"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.contact_mail), label: "Stats"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.settings), label: "Settings"),
-          ],
-        ),
-      ),
+      bottomNavigationBar: BottomNavBar()
     );
   }
 }

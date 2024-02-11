@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'components/bottomNavBar.dart';
 import 'subscription_details_page.dart';
 
 class BrowseAll extends StatefulWidget {
@@ -100,12 +101,15 @@ class _BrowseAllState extends State<BrowseAll> {
                             ),
                           );
                         },
-                      child: Image.asset(
-                          _getImagePath(
-                              index), // Get the corresponding image path
-                          height: 60,
-                          width: 60,
-                        ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset(
+                            _getImagePath(
+                                index), // Get the corresponding image path
+                            height: 60,
+                            width: 60,
+                          ),
+                      ),
                     )
                     : Icon(
                         _icons[index - _imagePaths.length],
@@ -117,6 +121,7 @@ class _BrowseAllState extends State<BrowseAll> {
           ),
         ],
       ),
+        bottomNavigationBar: BottomNavBar()
     );
   }
 }

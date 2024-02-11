@@ -1,5 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+import 'package:spit_hack_2024/presentation/splash_page.dart';
+
+import 'components/bottomNavBar.dart';
 
 class YourSubs extends StatefulWidget {
   const YourSubs({Key? key}) : super(key: key);
@@ -11,7 +16,11 @@ class YourSubs extends StatefulWidget {
 class _YourSubsState extends State<YourSubs> {
   List<Map<String, String>> subscriptions = [];
   GlobalKey<AutoCompleteTextFieldState<String>> key = GlobalKey();
-
+  final TextEditingController name1 = new TextEditingController();
+  final TextEditingController type1 = new TextEditingController();
+  final TextEditingController price1 = new TextEditingController();
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  FirebaseAuth auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,19 +29,12 @@ class _YourSubsState extends State<YourSubs> {
       ),
       body: subscriptions.isEmpty
           ? Center(
-        child: Container(
-          padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8.0),
-            color: Colors.grey[300],
-          ),
-          child: Text(
-            'Oops! to add new press the button ->',
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
-            ),
+        child: Text(
+          'Oops! to add new press the button ->',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
           ),
         ),
       )
@@ -56,6 +58,7 @@ class _YourSubsState extends State<YourSubs> {
         },
         child: Icon(Icons.add),
       ),
+        bottomNavigationBar: BottomNavBar()
     );
   }
 
@@ -74,6 +77,7 @@ class _YourSubsState extends State<YourSubs> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 AutoCompleteTextField<String>(
+                  controller: name1,
                   key: key,
                   clearOnSubmit: false,
                   suggestions: ["Netflix", "Amazon Prime", "Hulu", "Disney+"],
@@ -93,16 +97,19 @@ class _YourSubsState extends State<YourSubs> {
                   decoration: InputDecoration(labelText: 'Name'),
                 ),
                 TextField(
+                  controller: type1,
                   decoration: InputDecoration(labelText: 'Type'),
                   onChanged: (value) {
                     type = value;
                   },
                 ),
-                TextField(
+                TextFormField(
+                  controller: price1,
                   decoration: InputDecoration(labelText: 'Price'),
                   onChanged: (value) {
                     price = value;
                   },
+                  keyboardType: TextInputType.number,
                 ),
               ],
             ),
@@ -117,11 +124,8 @@ class _YourSubsState extends State<YourSubs> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  subscriptions.add({
-                    'name': name,
-                    'type': type,
-                    'price': price,
-                  });
+                  _submitSignUpForm(context);
+
                 });
                 Navigator.of(context).pop();
               },
@@ -129,7 +133,27 @@ class _YourSubsState extends State<YourSubs> {
             ),
           ],
         );
+
       },
+
     );
   }
+  void _submitSignUpForm(BuildContext context) {
+    final subscription_name = name1.text;
+    final subscription_type = type1.text;
+    final subscription_price = price1.text;
+
+    firestore.collection('users').doc(auth.currentUser!.uid).collection('subscriptions').doc(subscription_name).set({
+      'name': subscription_name,
+      'address': subscription_type,
+      'dob': subscription_price,
+    }).then((value) {
+
+    }).catchError((error) {
+      print('Error: $error');
+    });
+  }
+
+
+
 }
