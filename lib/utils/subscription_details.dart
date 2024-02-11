@@ -3,6 +3,7 @@ class SubscriptionDetails {
     "netflix": {
       "title": "Netflix",
       "icon_image": "assets/netflix.png",
+      "tag": "OTT",
       "description":
       "Netflix is a leading subscription-based streaming service offering a wide variety of movies, TV shows, documentaries, and original content across various genres and languages. It allows users to stream content on-demand on multiple devices, including smartphones, tablets, smart TVs, and computers. With a vast library of content and user-friendly interface, Netflix has become one of the most popular streaming platforms worldwide.",
       "price": ["149", "649"],
@@ -14,6 +15,7 @@ class SubscriptionDetails {
     "spotify": {
       "title": "Spotify",
       "icon_image": "assets/spotify.png",
+      "tag": "music",
       "description":
       "Spotify is a digital music streaming service that provides users access to millions of songs, podcasts, and audiobooks from various artists and creators around the globe. Users can listen to their favorite tracks on-demand, create personalized playlists, discover new music through curated playlists and recommendations, and share their music experiences with friends. Spotify offers both free and premium subscription options with additional features such as offline listening and ad-free playback available to premium subscribers.",
       "price": ["129", "199"],
@@ -25,6 +27,7 @@ class SubscriptionDetails {
     "prime": {
       "title": "Amazon Prime Video",
       "icon_image": "assets/prime.png",
+      "tag": "OTT",
       "description":
       "Amazon Prime Video is a subscription-based streaming service offered by Amazon that provides users with access to a vast library of movies, TV shows, original series, and exclusive content. With Amazon Prime membership, users can stream popular movies and TV shows, including Amazon Originals like 'The Marvelous Mrs. Maisel,' 'The Boys,' and 'Fleabag.' Prime Video offers a diverse selection of content spanning various genres, languages, and regions, making it a popular choice among streaming enthusiasts.",
       "price": ["199", "399"],
@@ -36,6 +39,7 @@ class SubscriptionDetails {
     "elbato": {
       "title": "Elbato - the catbat",
       "icon_image": "assets/elbato.png",
+      "tag": "Productivity",
       "description":
       "The Batman-Cat Hybrid Mascot is a fictional TV series that follows the adventures of a unique superhero character who is a combination of a bat and a cat. Set in a vibrant and dynamic metropolis, the series explores the dual identity of the protagonist as they navigate the challenges of crime-fighting and maintaining a secret identity. With a blend of action, humor, and suspense, the show appeals to audiences of all ages, offering thrilling adventures, compelling storylines, and memorable characters. As a subscription streaming service, viewers can binge-watch episodes of the Batman-Cat Hybrid Mascot series on-demand, immersing themselves in a world filled with excitement and intrigue.",
       "price": ["19", "249"],
@@ -47,6 +51,7 @@ class SubscriptionDetails {
     "office": {
       "title": "Microsoft Office 365",
       "icon_image": "assets/office.png",
+      "tag": "Productivity",
       "description":
       "Microsoft Office 365 is a comprehensive suite of productivity tools and cloud-based services offered by Microsoft. It includes popular applications such as Word, Excel, PowerPoint, Outlook, OneNote, and Teams, along with various other productivity and collaboration tools. Office 365 enables users to create, edit, and collaborate on documents, spreadsheets, presentations, and notes from anywhere, at any time, and on any device with an internet connection.",
       "price": ["449", "799"],
