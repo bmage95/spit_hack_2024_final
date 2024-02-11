@@ -43,6 +43,7 @@ dependencies:
   image_picker: ^1.0.7
   firebase_storage: ^11.6.5
   autocomplete_textfield: ^2.0.1
+  pie_chart: ^5.4.0
 
 dev_dependencies:
   flutter_test:

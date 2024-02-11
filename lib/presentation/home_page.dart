@@ -150,46 +150,58 @@ class _HomePageState extends State<HomePage> {
                   ),
                   SizedBox(
                     height: 200,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: subscriptions.length,
-                      itemBuilder: (context, index) {
-                        return Row(
-                          children: [
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        SubscriptionDetailsPage(
-                                      name: subscriptions[index]['imageName']
-                                              .split('/')
-                                              .last
-                                              .split('.')
-                                              .first ??
-                                          '',
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: SubscriptionCard(
-                                searchedString: subscriptions[index]
-                                        ['imageName']
-                                    .split('/')[1]
-                                    .split('.')
-                                    .first,
-                                aspectRatio: 3 / 4,
-                                borderRadius: 10,
+                    child: subscriptions.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'You do not have any active subscriptions. Please add a subscription to get started.',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ],
-                        );
-                      },
-                    ),
+                          )
+                        : ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: subscriptions.length,
+                            itemBuilder: (context, index) {
+                              return Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              SubscriptionDetailsPage(
+                                            name: subscriptions[index]
+                                                        ['imageName']
+                                                    .split('/')
+                                                    .last
+                                                    .split('.')
+                                                    .first ??
+                                                '',
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: SubscriptionCard(
+                                      searchedString: subscriptions[index]
+                                              ['imageName']
+                                          .split('/')[1]
+                                          .split('.')
+                                          .first,
+                                      aspectRatio: 3 / 4,
+                                      borderRadius: 10,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
                   ),
                   const SizedBox(height: 20),
                   const Padding(
