@@ -1,5 +1,12 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:spit_hack_2024/presentation/payment_status.dart';
 import 'package:spit_hack_2024/utils/subscription_details.dart';
+
+import 'home_page.dart';
 
 class SubscriptionDetailsPage extends StatefulWidget {
   const SubscriptionDetailsPage({super.key, required this.name});
@@ -75,7 +82,7 @@ class _SubscriptionDetailsPageState extends State<SubscriptionDetailsPage> {
                       child: Column(
                         children: [
                           const Text(
-                            'Monthly Price',
+                            'Split Plan',
                             style: TextStyle(
                               fontSize: 18,
                             ),
@@ -97,7 +104,7 @@ class _SubscriptionDetailsPageState extends State<SubscriptionDetailsPage> {
                       child: Column(
                         children: [
                           const Text(
-                            'Yearly Price',
+                            'Personal Plan',
                             style: TextStyle(
                               fontSize: 18,
                             ),
@@ -140,11 +147,88 @@ class _SubscriptionDetailsPageState extends State<SubscriptionDetailsPage> {
         child: Container(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              _showSubscriptionDialog();
+            },
             child: const Text('Buy plan'),
           ),
         ),
       ),
     );
+  }
+  void _showSubscriptionDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String name = '';
+
+        return AlertDialog(
+          title: Text('Add Subscription'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Personal Plan",),
+                    ElevatedButton(onPressed: (){
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PaymentPage(),
+                        ),
+                      );
+                    }, child: Text('₹'+details['price'][1]))
+                  ],
+                ),
+                SizedBox(height: 20,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Split Plan",),
+                    ElevatedButton(onPressed: (){
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PaymentPage(),
+                        ),
+                      );
+                      _splitPlan(context);
+                    }, child: Text('₹'+details['price'][0]))
+                  ],
+                ),
+
+              ],
+            ),
+          ),
+
+        );
+      },
+    );
+  }
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  FirebaseAuth auth = FirebaseAuth.instance;
+  void _splitPlan(BuildContext context) {
+    final subscriptionName = details['name'];
+    final subscriptionPrice=details['price'][0];
+    firestore
+        .collection('subscriptions')
+        .doc(subscriptionName)
+        .collection(generateRandomString(20))
+        .doc(auth.currentUser!.uid)
+        .update({
+      'User': auth.currentUser!.uid,
+
+    }).then((value) {
+      // Subscription added successfully
+    }).catchError((error) {
+      print('Error: $error');
+    });
+  }
+  String generateRandomString(int len) {
+    var r = Random();
+    return String.fromCharCodes(List.generate(len, (index) => r.nextInt(33) + 89));
   }
 }

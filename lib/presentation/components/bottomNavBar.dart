@@ -80,7 +80,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         BottomNavigationBarItem(
             icon: Icon(Icons.contact_mail), label: "Stats"),
         BottomNavigationBarItem(
-            icon: Icon(Icons.settings), label: "Settings"),
+            icon: Icon(Icons.person), label: "Settings"),
       ],);
   }
 }
