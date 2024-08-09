@@ -1,8 +1,4 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:spit_hack_2024/utils/subscription_details.dart';
 import 'components/bottomNavBar.dart';
@@ -19,8 +15,6 @@ class _YourSubsState extends State<YourSubs> {
   final TextEditingController name1 = TextEditingController();
   String selectedType = 'Type 1'; // Default value for Type
   int selectedPrice = 149; // Default value for Price
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-  FirebaseAuth auth = FirebaseAuth.instance;
   final prices = [149, 999];
   GlobalKey<AutoCompleteTextFieldState<String>> key = GlobalKey();
   final data = SubscriptionDetails.subscriptionData;
@@ -32,20 +26,6 @@ class _YourSubsState extends State<YourSubs> {
 
   @override
   void initState() {
-    firestore
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('subscriptions')
-        .get()
-        .then((value) {
-      if (value.docs.isNotEmpty) {
-        value.docs.forEach((element) {
-          setState(() {
-            subscriptions.add(element.data());
-          });
-        });
-      }
-    });
     super.initState();
   }
 
@@ -196,24 +176,5 @@ class _YourSubsState extends State<YourSubs> {
     );
   }
 
-  void _submitSignUpForm(BuildContext context) {
-    final subscriptionName = name1.text;
-
-    firestore
-        .collection('users')
-        .doc(auth.currentUser!.uid)
-        .collection('subscriptions')
-        .doc(subscriptionName)
-        .set({
-      'name': subscriptionName,
-      'type': selectedType,
-      'price': selectedPrice,
-      'imageName': SubscriptionDetails.subscriptionData.values
-          .elementAt(titles.indexOf(subscriptionName))['icon_image'],
-    }).then((value) {
-      // Subscription added successfully
-    }).catchError((error) {
-      print('Error: $error');
-    });
-  }
+  void _submitSignUpForm(BuildContext context) {}
 }

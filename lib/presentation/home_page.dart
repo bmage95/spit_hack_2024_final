@@ -1,17 +1,9 @@
 import 'dart:math';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:spit_hack_2024/presentation/browse_all.dart'; // Import BrowseAll page
-import 'package:spit_hack_2024/presentation/splash_page.dart';
 import 'package:spit_hack_2024/presentation/subscription_details_page.dart';
 import 'package:spit_hack_2024/utils/subscription_details.dart';
-
-import 'about_me.dart';
 import 'components/bottomNavBar.dart';
 import 'components/subscription_card.dart';
-import 'your_subs.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,10 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> subscriptions = [];
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
   int monthlyExpenses = 0;
-  FirebaseAuth auth = FirebaseAuth.instance;
-
   List<int> randomIndexes = [];
 
   getRandIndex() {
@@ -42,38 +31,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    firestore
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('subscriptions')
-        .get()
-        .then((value) {
-      if (value.docs.isNotEmpty) {
-        value.docs.forEach((element) {
-          setState(() {
-            subscriptions.add(element.data());
-          });
-        });
-      }
-    });
-    firestore
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('subscriptions')
-        .get()
-        .then((value) {
-      if (value.docs.isNotEmpty) {
-        value.docs.forEach((element) {
-          setState(() {
-            monthlyExpenses += int.parse(element['price'].toString());
-          });
-        });
-      }
-    });
-    for (var i = 0; i < 4; i++) {
-      getRandIndex();
-    }
-    debugPrint(randomIndexes.toString());
     super.initState();
   }
 
